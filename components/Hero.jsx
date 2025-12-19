@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
@@ -20,6 +20,19 @@ import { ArrowUpRight, Menu, X } from 'lucide-react';
  */
 export default function Hero() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePos({
+        x: (e.clientX / window.innerWidth) * 20 - 10,
+        y: (e.clientY / window.innerHeight) * 20 - 10,
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const handleMenuToggle = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
@@ -50,20 +63,20 @@ export default function Hero() {
           className="flex items-center gap-2 font-semibold text-lg"
         >
           <h2 className="text-md md:text-2xl font-light tracking-tight leading-tight">
-            Profile<span className="font-semibold text-white">X</span>
+            Noe
           </h2>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex gap-6 text-lg text-gray-400" aria-label="Primary navigation">
-          {['Services', 'Projects', 'Testimonials', 'Contact'].map((item) => (
-            <Link
+          {['About', 'Projects', 'Contact'].map((item) => (
+            <a
               key={item}
-              href={`#`}
+              href={`#${item.toLowerCase()}`}
               className="hover:text-white transition"
             >
               {item}
-            </Link>
+            </a>
           ))}
         </nav>
 
@@ -76,16 +89,6 @@ export default function Hero() {
         >
           <Menu className="w-6 h-6 text-white" aria-hidden="true" />
         </button>
-
-        {/* CTA Desktop */}
-        <Link
-          href="#"
-          className="hidden md:flex items-center gap-2 bg-gradient-to-r from-neutral-800 to-black 
-                     px-6 py-3 border border-gray-700 rounded-full font-medium 
-                     hover:opacity-90 transition text-sm"
-        >
-          Get for Free
-        </Link>
       </header>
 
       {/* ===== MOBILE SIDEBAR MENU ===== */}
@@ -113,7 +116,7 @@ export default function Hero() {
                 className="flex items-center gap-2 font-semibold text-lg"
               >
                 <h2 className="text-md md:text-2xl font-light tracking-tight leading-tight">
-                  Profile<span className="font-semibold text-white">X</span>
+                  Noe
                 </h2>
               </Link>
               <button
@@ -128,133 +131,83 @@ export default function Hero() {
 
             {/* Links */}
             <nav className="flex flex-col gap-6 mt-12" aria-label="Mobile navigation">
-              {['Services', 'Projects', 'Testimonials', 'Contact'].map((item) => (
-                <Link
+              {['About', 'Projects', 'Contact'].map((item) => (
+                <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
                   onClick={closeMenu}
                 >
                   {item}
-                </Link>
+                </a>
               ))}
-              <button
-                onClick={closeMenuAndOpenForm}
-                className="bg-gradient-to-r from-neutral-800 to-black px-6 py-3 
-                           border border-gray-700 rounded-full font-medium 
-                           hover:opacity-90 transition text-sm w-fit"
-              >
-                Get for Free
-              </button>
             </nav>
           </aside>
         </>
       )}
 
       {/* ===== HERO SECTION ===== */}
-      <section className="pt-32 md:pt-40 px-6 overflow-hidden">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Text Column */}
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 
-                            rounded-full text-sm text-gray-300 backdrop-blur-md w-fit 
-                            border border-white/10"
+      <section className="pt-32 md:pt-40 px-6 overflow-hidden min-h-screen flex items-center relative">
+        {/* Gradient orbs */}
+        <div
+          className="absolute top-20 -left-40 w-80 h-80 bg-blue-600/30 rounded-full blur-3xl opacity-50"
+          style={{
+            transform: `translate(${mousePos.x * 2}px, ${mousePos.y * 2}px)`,
+            transition: 'transform 0.1s ease-out',
+          }}
+        />
+        <div
+          className="absolute bottom-20 -right-40 w-80 h-80 bg-purple-600/30 rounded-full blur-3xl opacity-50"
+          style={{
+            transform: `translate(${mousePos.x * -2}px, ${mousePos.y * -2}px)`,
+            transition: 'transform 0.1s ease-out',
+          }}
+        />
+
+        <div className="max-w-4xl mx-auto text-center w-full relative z-10">
+          <h1
+            className="text-5xl md:text-7xl font-light tracking-tight leading-tight mb-6 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent"
+            style={{
+              transform: `perspective(1000px) rotateX(${mousePos.y * 0.5}deg) rotateY(${mousePos.x * 0.5}deg)`,
+              transition: 'transform 0.1s ease-out',
+            }}
+          >
+            Noe
+          </h1>
+
+          <p className="text-xl md:text-2xl text-gray-400 mb-4 animate-fade-in">
+            Backend Engineer & Systems Architect
+          </p>
+
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-8 animate-fade-in animation-delay-100">
+            Building scalable systems and APIs that power modern applications.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in animation-delay-200">
+            <a
+              href="#projects"
+              className="bg-gradient-to-r from-blue-500 to-cyan-500 text-black px-8 py-4 rounded-full font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 transform hover:scale-105"
             >
-              <span className="text-xs" aria-hidden="true">●</span>
-              UI/UX &amp; Graphic Designer
-            </div>
-
-            <h1 className="text-5xl md:text-6xl font-light tracking-tight leading-tight">
-              Arjun <span className="font-semibold text-white">Mehra</span>
-              <span className="inline-block ml-2 rounded-full bg-white/10 p-2">
-                <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-              </span>
-            </h1>
-
-            <p className="text-lg text-gray-400 max-w-xl">
-              I’m a versatile designer specializing in graphic, web, and product design
-              to help grow your business. Let’s build something great!
-            </p>
-
-            <div className="flex flex-wrap gap-4 pt-2">
-              <Link
-                href="#projects"
-                className="bg-white text-black px-6 py-3 border border-gray-700 
-                           rounded-full font-medium hover:bg-gray-200 transition text-sm"
-              >
-                See All Projects
-              </Link>
-              <button
-                className="bg-gradient-to-r from-neutral-800 to-black px-6 py-3 
-                           border border-gray-700 rounded-full font-medium 
-                           hover:opacity-90 transition text-sm"
-              >
-                Contact Now
-              </button>
-            </div>
+              View Projects
+            </a>
+            <a
+              href="#contact"
+              className="bg-transparent border border-white/20 px-8 py-4 rounded-full font-medium hover:bg-white/10 hover:border-white/40 transition-all duration-300"
+            >
+              Contact
+            </a>
           </div>
 
-          {/* Floating Testimonials */}
-          <div className="relative h-[280px] md:h-[300px] lg:h-[320px] w-full">
-            <blockquote
-              className="absolute top-6 left-0 bg-gradient-to-br from-white/5 to-white/10 
-                         border border-white/10 text-base text-white p-5 rounded-xl 
-                         shadow-md w-80 rotate-[-4deg] backdrop-blur-md"
-            >
-              “Working with him was a game changer!”
-              <footer className="text-right mt-3 text-sm text-gray-400">– pranavnb</footer>
-            </blockquote>
-
-            <blockquote
-              className="absolute bottom-6 right-0 bg-gradient-to-br from-white/5 to-white/10 
-                         border border-white/10 text-base text-white p-5 rounded-xl 
-                         shadow-md w-80 rotate-[4deg] backdrop-blur-md"
-            >
-              “We increased our conversions by 200%”
-              <footer className="text-right mt-3 text-sm text-gray-400">– vijaynb</footer>
-            </blockquote>
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+            <div className="animate-bounce">
+              <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ===== PROJECTS SECTION ===== */}
-      <section id="projects" className="bg-black py-20 px-4">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-white text-4xl font-bold mb-12 text-center md:text-left">
-            Featured Projects
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { src: '/images/project1.webp', alt: 'Project 1', span: 'sm:col-span-2 lg:col-span-2', aspect: 'aspect-[16/9]' },
-              { src: '/images/project2.webp', alt: 'Project 2', aspect: 'aspect-[4/3]' },
-              { src: '/images/project3.webp', alt: 'Project 3', span: 'sm:col-span-2', aspect: 'aspect-[16/9]' },
-              { src: '/images/project4.webp', alt: 'Project 4', aspect: 'aspect-[4/3]' },
-              { src: '/images/project5.webp', alt: 'Project 5', span: 'sm:col-span-2 lg:col-span-3', aspect: 'aspect-[21/9]' }
-            ].map(({ src, alt, span = '', aspect }) => (
-              <a
-                key={src}
-                href="/#"
-                className={`relative group ${span}`}
-              >
-                <Image
-                  src={src}
-                  alt={alt}
-                  width={800}
-                  height={600}
-                  className={`rounded-lg w-full h-full object-cover ${aspect}`}
-                  loading="lazy"
-                />
-                <div
-                  className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center 
-                             opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                >
-                  <span className="text-white text-lg font-semibold">View Project</span>
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
